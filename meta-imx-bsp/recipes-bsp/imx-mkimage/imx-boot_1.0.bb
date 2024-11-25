@@ -48,6 +48,8 @@ OEI_NAME ?= "oei-${OEI_CORE}-*.bin"
 ATF_MACHINE_NAME ?= "bl31-${ATF_PLATFORM}.bin"
 ATF_MACHINE_NAME:append = "${@bb.utils.contains('MACHINE_FEATURES', 'optee', '-optee', '', d)}"
 
+UBOOT_NAME = "u-boot-${MACHINE}.bin-${UBOOT_CONFIG}"
+BOOT_CONFIG_MACHINE = "${BOOT_NAME}${BOOT_VARIANT}-${MACHINE}-${UBOOT_CONFIG}.bin"
 BOOT_VARIANT ?= ""
 
 TOOLS_NAME ?= "mkimage_imx8"
@@ -224,6 +226,7 @@ do_compile() {
                 fi
                 UBOOT_NAME_EXTRA="u-boot-${MACHINE}.bin-${UBOOT_CONFIG_EXTRA}"
                 BOOT_CONFIG_MACHINE_EXTRA="${BOOT_NAME}${BOOT_VARIANT}-${MACHINE}-${UBOOT_CONFIG_EXTRA}.bin"
+
 
                 for target in ${IMXBOOT_TARGETS}; do
                     compile_${SOC_FAMILY}
