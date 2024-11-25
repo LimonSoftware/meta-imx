@@ -7,6 +7,6 @@ SRC_URI += "file://defconfig"
 
 do_configure:prepend () {
         # Overwrite defconfig with NXP Wi-Fi version
-        install -m 0755 ${WORKDIR}/defconfig wpa_supplicant/defconfig
+        install -m 0755 ${UNPACKDIR}/defconfig wpa_supplicant/defconfig
 
 }
