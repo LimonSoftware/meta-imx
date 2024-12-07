@@ -19,6 +19,8 @@ DEPENDS += " \
 DEPENDS += "xxd-native"
 DEPENDS:append:mx8m-generic-bsp = " u-boot-mkimage-native dtc-native"
 DEPENDS:append:mx93-generic-bsp = " u-boot-mkimage-native dtc-native"
+BOOT_NAME = "imx-boot"
+PROVIDES = "${BOOT_NAME}"
 
 inherit deploy uuu_bootloader_tag
 
@@ -103,19 +105,23 @@ compile_mx8m() {
 
     if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ] ; then
         # Use DTB binary patched with signature node
-        cp ${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_BINARY}           ${BOOT_STAGING}/${UBOOT_DTB_NAME_EXTRA}
+        cp -v ${DEPLOY_DIR_IMAGE}/${UBOOT_DTB_BINARY}           ${BOOT_STAGING}/${UBOOT_DTB_NAME_EXTRA}
     else
-        cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/${UBOOT_DTB_NAME_EXTRA} \
+        cp -v ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/${UBOOT_DTB_NAME_EXTRA} \
                                                              ${BOOT_STAGING}
     fi
-    ln -sf ${UBOOT_DTB_NAME_EXTRA}                           ${BOOT_STAGING}/${UBOOT_DTB_NAME}
 
-    cp ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-nodtb.bin-${MACHINE}-${UBOOT_CONFIG_EXTRA} \
+    # NOTE: Only make a symlnk if both names are not the same
+    if [ "${UBOOT_DTB_NAME_EXTRA}" != "${UBOOT_DTB_BINARY}" ]; then
+        ln -sf ${UBOOT_DTB_NAME_EXTRA}                          ${BOOT_STAGING}/${UBOOT_DTB_BINARY}
+    fi
+
+    cp -v ${DEPLOY_DIR_IMAGE}/${BOOT_TOOLS}/u-boot-nodtb.bin-${MACHINE}-${UBOOT_CONFIG_EXTRA} \
                                                              ${BOOT_STAGING}/u-boot-nodtb.bin
 
-    cp ${DEPLOY_DIR_IMAGE}/${ATF_MACHINE_NAME}               ${BOOT_STAGING}/bl31.bin
+    cp -v ${DEPLOY_DIR_IMAGE}/${ATF_MACHINE_NAME}               ${BOOT_STAGING}/bl31.bin
 
-    cp ${DEPLOY_DIR_IMAGE}/${UBOOT_NAME_EXTRA}               ${BOOT_STAGING}/u-boot.bin
+    cp -v ${DEPLOY_DIR_IMAGE}/${UBOOT_NAME_EXTRA}               ${BOOT_STAGING}/u-boot.bin
 
 }
 
